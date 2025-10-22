@@ -1,14 +1,27 @@
+<script setup>
+    import { ref} from 'vue';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
+
+    const username = ref('');
+    function launchNewQuiz() {
+      console.log("Launch new quiz with", username.value);
+      router.push('/questions');
+    }
+
+</script>
+
 <template>
   <div class="new-quiz">
-    <p1>Saisissez votre nom</p1>
+    <p>Saisissez votre nom</p>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="basic-addon1">@</span>
         </div>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-        <button type="button" class="btn btn-primary">GO!</button>
+        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" v-model="username">
+        <button type="button" class="btn btn-primary" @click="launchNewQuiz">GO!</button>
     </div>
-
   </div>
 </template>
 
@@ -21,3 +34,5 @@
   }
 }
 </style>
+
+
