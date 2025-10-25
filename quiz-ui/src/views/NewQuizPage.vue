@@ -14,7 +14,7 @@
 
 <template>
   <div class="new-quiz">
-    <p>Saisissez votre nom</p>
+    <p>Saisissez votre nom </p>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="basic-addon1">@</span>
