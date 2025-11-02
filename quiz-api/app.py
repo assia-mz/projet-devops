@@ -14,7 +14,7 @@ load_dotenv()  # charge le .env
 expected_password = os.getenv("ADMIN_PASSWORD", "")
 expected_hash = hashlib.md5(expected_password.encode()).hexdigest()
 
-# ----------------- Helpers -----------------
+#----------------- Helpers -----------------
 
 
 def require_auth():
