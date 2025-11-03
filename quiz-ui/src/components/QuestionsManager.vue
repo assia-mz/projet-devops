@@ -12,7 +12,7 @@ import ParticipationStorageService from "@/services/ParticipationStorageService"
 
 const router = useRouter();
 
-const currentQuestionPosition = ref(1);
+const currentQuestionPosition = ref(0);
 const totalNumberOfQuestion = ref(0);
 const currentQuestion = ref(null);
 const selectedAnswer = ref([]); // ids des choix sélectionnés

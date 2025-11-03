@@ -1,12 +1,14 @@
 <script setup>
     import { ref} from 'vue';
     import { useRouter } from 'vue-router';
+    import participationStorageService from "@/services/ParticipationStorageService";
 
     const router = useRouter();
 
     const username = ref('');
     function launchNewQuiz() {
       console.log("Launch new quiz with", username.value);
+      participationStorageService.savePlayerName(username.value);
       router.push('/questions');
     }
 
