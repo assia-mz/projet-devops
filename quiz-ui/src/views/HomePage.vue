@@ -17,7 +17,7 @@ const registeredScores = ref([]);
       <router-link to="/new-quiz" class="button launch-btn">Démarrer le quiz !</router-link>
     </div>
     <div>
-      <img src="../assets/fonds/t-rex.jpg" class="quiz-img"></img>
+      <img src="../assets/fonds/t-rex.jpg" class="quiz-img"/>
     </div>
   </div>
   <div class="wrapper double scoreboard">

@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { /*RouterLink,*/ RouterView } from 'vue-router'
 import navbar from "./views/Navbar.vue";
 </script>
 
