@@ -15,7 +15,7 @@
 </script>
 
 <template>
-  <div class="new-quiz">
+  <div class="new-quiz block">
     <p>Saisissez votre nom </p>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
