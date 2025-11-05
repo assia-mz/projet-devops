@@ -13,7 +13,7 @@ const registeredScores = ref([]);
 <template>
   <div class="wrapper double">
     <div class="launch-quiz">
-      <h1 class="launch-title">Testez vos connaissances</h1>
+      <h1 class="big-title">Testez vos connaissances</h1>
       <router-link to="/new-quiz" class="button launch-btn">Démarrer le quiz !</router-link>
     </div>
     <div>
@@ -22,7 +22,8 @@ const registeredScores = ref([]);
   </div>
   <div class="wrapper double scoreboard">
     <div>
-      <h1 class="launch-title">Tableau des scores général</h1>
+      <h1 class="title">Tableau des scores</h1>
+      <h4 class="title">Général</h4>
       <div class="wrapper triple classement">
         <div class="right-text yellow">
           <p>1</p>
@@ -42,7 +43,10 @@ const registeredScores = ref([]);
       </div>
     </div>
     <div>
-      <h1 class="launch-title">Tableau des scores personnels</h1>
+      <div>
+        <h1 class="title">Tableau des scores</h1>
+        <h4 class="title">Personnel</h4>
+      </div>
       <div class="wrapper triple classement">
         <div class="right-text yellow">
           <p>1</p>
