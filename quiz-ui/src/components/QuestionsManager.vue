@@ -1,6 +1,10 @@
 <template>
   <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
-  <QuestionDisplay :question="currentQuestion" @click-on-answer="answerClickedHandler" />
+  <QuestionDisplay
+    v-if="currentQuestion"
+    :question="currentQuestion"
+    @click-on-answer="answerClickedHandler"
+  />
 </template>
 
 <script setup>
@@ -12,10 +16,10 @@ import ParticipationStorageService from "@/services/ParticipationStorageService"
 
 const router = useRouter();
 
-const currentQuestionPosition = ref(0);
+const currentQuestionPosition = ref(1);           // <-- 1-based
 const totalNumberOfQuestion = ref(0);
 const currentQuestion = ref(null);
-const selectedAnswer = ref([]); // ids des choix sélectionnés
+const selectedAnswer = ref([]);                    // indices 1..4
 
 onMounted(async () => {
   const playerName = ParticipationStorageService.getPlayerName();
@@ -25,41 +29,38 @@ onMounted(async () => {
   }
 
   const info = await QuizApiService.getQuizInfo();
-  totalNumberOfQuestion.value = info.data.totalQuestions;
+  totalNumberOfQuestion.value = info.data.size;    // { size, scores }
 
-  await loadQuestionByPosition(currentQuestionPosition.value);
+  if (totalNumberOfQuestion.value > 0) {
+    await loadQuestionByPosition(currentQuestionPosition.value);
+  }
 });
 
 async function loadQuestionByPosition(pos) {
-  const response = await QuizApiService.getQuestion(pos);
-  if (response && response.data) {
-    currentQuestion.value = response.data;
-  } else {
-    currentQuestion.value = null;
-  }
+  const response = await QuizApiService.getQuestion(pos); // /questions?position=pos
+  currentQuestion.value = (response && response.data) ? response.data : null;
 }
 
-async function answerClickedHandler(choiceId) {
-  selectedAnswer.value.push(choiceId);
+async function answerClickedHandler(choiceIndex) {
+  selectedAnswer.value.push(choiceIndex);
 
-  if (currentQuestionPosition.value >= totalNumberOfQuestion.value) {
+  const nextPos = currentQuestionPosition.value + 1;
+  if (nextPos > totalNumberOfQuestion.value) {
     await endQuiz();
   } else {
-    currentQuestionPosition.value = currentQuestionPosition.value + 1;
-    await loadQuestionByPosition(currentQuestionPosition.value);
+    currentQuestionPosition.value = nextPos;
+    await loadQuestionByPosition(nextPos);
   }
 }
 
 async function endQuiz() {
   const player = {
     playerName: ParticipationStorageService.getPlayerName(),
-    answers: selectedAnswer.value,
+    answers: selectedAnswer.value,                 // longueur = size, valeurs 1..4
   };
 
   const response = await QuizApiService.postParticipation(player);
-
-    ParticipationStorageService.saveParticipationScore(response.data.score);
-
+  ParticipationStorageService.saveParticipationScore(response.data.score);
   router.push("/result");
 }
 </script>

@@ -1,12 +1,12 @@
 import axios from "axios";
 
 const instance = axios.create({
-	baseURL: `${import.meta.env.VITE_API_URL}`,
-  json: true
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000",
+  timeout: 10000
 });
 
 export default {
-  async call(method, resource, data = null, token = null) {
+  async call(method, resource, data = null, token = null, params = null) {
     var headers = {
       "Content-Type": "application/json",
     };
@@ -16,9 +16,10 @@ export default {
 
     return instance({
       method,
-      headers: headers,
-      url: resource,
-      data,
+      headers,
+      url: resource.startsWith("/") ? resource : `/${resource}`,
+      data: ["post","put","patch"].includes(method.toLowerCase()) ? data : undefined,
+      params
     })
       .then((response) => {
         return { status: response.status, data: response.data };
@@ -27,10 +28,16 @@ export default {
         console.error(error);
       });
   },
+
   getQuizInfo() {
-    return this.call("get", "quiz-info");
+    return this.call("get", "/quiz-info");
   },
+
   getQuestion(position) {
-    return this.call("get", `questions/${position}`);
-  }
+    return this.call("get", "/questions", null, null, { position });
+  },
+
+  postParticipation(payload) {
+    return this.call("post", "/participations", payload);
+  },
 };
