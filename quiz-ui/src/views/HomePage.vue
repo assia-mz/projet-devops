@@ -31,13 +31,13 @@ onMounted(async () => {
           <p v-for="(s, i) in topScores" :key="i">{{ i + 1 }}</p>
         </div>
         <div class="center-text">
+          <p v-if="!topScores.length" class="empty">Aucun score pour le moment.</p>
           <p v-for="(s, i) in topScores" :key="i">{{ s.playerName }}</p>
         </div>
         <div class="left-text green">
           <p v-for="(s, i) in topScores" :key="i">{{ s.score }}</p>
         </div>
       </div>
-      <p v-if="!topScores.length" class="empty">Aucun score pour le moment.</p>
     </div>
     <div></div>
   </div>
