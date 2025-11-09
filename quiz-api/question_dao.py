@@ -5,8 +5,7 @@ import time
 
 DB_PATH = "bdd.db"
 
-
-
+# ---------- Connection ----------
 def get_connection_with_retry(retries=5, delay=0.1):
     for _ in range(retries):
         try:
@@ -21,9 +20,7 @@ def get_connection_with_retry(retries=5, delay=0.1):
                 raise
     raise sqlite3.OperationalError("Database is locked after multiple retries")
 
-# ---------- DB (re)build ----------
-
-
+# ---------- Helpers BD ----------
 def rebuild_db():
     conn = get_connection_with_retry()
     c = conn.cursor()
@@ -64,9 +61,6 @@ def rebuild_db():
     conn.commit()
     conn.close()
 
-# If you want to call programmatically:
-
-
 def ensure_db():
     try:
         conn = get_connection_with_retry()
@@ -76,8 +70,6 @@ def ensure_db():
         rebuild_db()
 
 # ---------- Count ----------
-
-
 def count_questions() -> int:
     conn = get_connection_with_retry()
     c = conn.cursor()
@@ -86,9 +78,7 @@ def count_questions() -> int:
     conn.close()
     return row["cnt"] if row else 0
 
-# ---------- Insert with position handling ----------
-
-
+# ---------- Insertion avec position ----------
 def shift_positions_on_insert(position: int):
     conn = get_connection_with_retry()
     c = conn.cursor()
@@ -97,7 +87,6 @@ def shift_positions_on_insert(position: int):
         "UPDATE Question SET position = position + 1 WHERE position >= ?", (position,))
     conn.commit()
     conn.close()
-
 
 def insert_question(question: Question) -> int:
     conn = get_connection_with_retry()
@@ -112,23 +101,18 @@ def insert_question(question: Question) -> int:
         else:
             c.execute(
                 "UPDATE Question SET position = position + 1 WHERE position >= ?", (question.position,))
-
         c.execute("""
             INSERT INTO Question (title, text, image, position)
             VALUES (?, ?, ?, ?)
         """, (question.title, question.text, question.image, question.position))
-
         qid = c.lastrowid
         conn.commit()
         return qid
-
     except sqlite3.IntegrityError:
         conn.rollback()
         raise
     finally:
         conn.close()
-
-
 
 def insert_answer(answer: Reponse) -> int:
     conn = get_connection_with_retry()
@@ -143,8 +127,6 @@ def insert_answer(answer: Reponse) -> int:
     return aid
 
 # ---------- Get by id / position ----------
-
-
 def get_question_by_id(question_id: int) -> Question:
     conn = get_connection_with_retry()
     c = conn.cursor()
@@ -170,7 +152,6 @@ def get_question_by_id(question_id: int) -> Question:
     q.answers = answers
     conn.close()
     return q
-
 
 def get_question_by_position(position: int) -> Question:
     conn = get_connection_with_retry()
@@ -198,13 +179,11 @@ def get_question_by_position(position: int) -> Question:
     conn.close()
     return q
 
-
 def get_all_questions():
     conn = get_connection_with_retry()
     c = conn.cursor()
     c.execute("SELECT * FROM Question ORDER BY position ASC")
     questions = c.fetchall()
-
     result = []
     for q in questions:
         q_id = q["id"]
@@ -219,10 +198,7 @@ def get_all_questions():
             "reponses": [dict(r) for r in reponses]
         }
         result.append(question_data)
-
         print("\n=== Questions et Réponses ===")
-
-
     for q in questions:
         print(f"Question {q['position']} - {q['title']}")
         c.execute("SELECT * FROM Reponse WHERE question_id = ? ORDER BY answer_index ASC", (q["id"],))
@@ -233,20 +209,11 @@ def get_all_questions():
     conn.close()
     return result
 
-
 # ---------- Update fields & move logic ----------
-
 def replace_answers_for_question(question_id: int, new_answers: list):
-    """
-    Supprime toutes les anciennes réponses d'une question,
-    puis insère les nouvelles (list of Reponse).
-    """
     conn = get_connection_with_retry()
     c = conn.cursor()
-
-    # Supprimer les anciennes réponses
     c.execute("DELETE FROM Reponse WHERE question_id = ?", (question_id,))
-
     for idx, ans in enumerate(new_answers, start=1):
         c.execute("""
                 INSERT INTO Reponse (question_id, answer_index, text, isCorrect)
@@ -266,7 +233,6 @@ def update_question_fields(question: Question):
     conn.commit()
     conn.close()
 
-
 def get_position_by_id(question_id: int):
     conn = get_connection_with_retry()
     c = conn.cursor()
@@ -275,17 +241,13 @@ def get_position_by_id(question_id: int):
     conn.close()
     return row["position"] if row else None
 
-
 def move_question_by_id(question_id: int, new_position: int):
-    """Déplace la question identifiée par id à new_position et réordonne les autres."""
     old_position = get_position_by_id(question_id)
     if old_position is None:
         return
     move_question(question_id, new_position)
 
-
 def move_question_by_position(old_position: int, new_position: int):
-    """Déplace la question à old_position vers new_position."""
     conn = get_connection_with_retry()
     c = conn.cursor()
     c.execute("SELECT id FROM Question WHERE position = ?", (old_position,))
@@ -296,14 +258,10 @@ def move_question_by_position(old_position: int, new_position: int):
     question_id = row["id"]
     move_logic(old_position, new_position, question_id)
 
-
 def move_logic(old_pos, new_pos, qid):
     conn = get_connection_with_retry()
     c = conn.cursor()
-
-    # Étape 1 : décaler la question qu’on déplace hors plage (valeur temporaire)
     c.execute("UPDATE Question SET position = -1 WHERE id = ?", (qid,))
-
     if new_pos < old_pos:
         c.execute("""
             UPDATE Question
@@ -316,89 +274,68 @@ def move_logic(old_pos, new_pos, qid):
             SET position = position - 1
             WHERE position > ? AND position <= ?
         """, (old_pos, new_pos))
-
-    # Étape 2 : placer la question déplacée à sa nouvelle position
     c.execute("UPDATE Question SET position = ? WHERE id = ?", (new_pos, qid))
-
     conn.commit()
     conn.close()
     
 def move_question(question_id: int, new_position: int):
     conn = get_connection_with_retry()
     c = conn.cursor()
-
-    # Récupérer la position actuelle de la question
     c.execute("SELECT position FROM Question WHERE id = ?", (question_id,))
     row = c.fetchone()
     if not row:
         conn.close()
         raise ValueError(f"Question id {question_id} not found")
     old_position = row["position"]
-
-    # Récupérer le nombre total de questions
     c.execute("SELECT COUNT(*) as count FROM Question")
     total = c.fetchone()["count"]
-
-    # S'assurer que la nouvelle position est valide
+    
     if new_position < 1:
         new_position = 1
     elif new_position > total:
         new_position = total
-
-    # Si la position ne change pas, ne rien faire
+        
     if new_position == old_position:
         conn.close()
         return
 
-    # ✅ Étape 1 : mettre la question déplacée à une position temporaire (0)
     c.execute("UPDATE Question SET position = 0 WHERE id = ?", (question_id,))
 
-    # ✅ Étape 2 : décaler les autres questions
     if new_position < old_position:
-        # on décale vers le bas les questions entre la nouvelle et l’ancienne position
         c.execute("""
             UPDATE Question
             SET position = position + 1
             WHERE position >= ? AND position < ?
         """, (new_position, old_position))
     else:
-        # on décale vers le haut
         c.execute("""
             UPDATE Question
             SET position = position - 1
             WHERE position <= ? AND position > ?
         """, (new_position, old_position))
 
-    # ✅ Étape 3 : placer la question à sa nouvelle position
     c.execute("UPDATE Question SET position = ? WHERE id = ?",
             (new_position, question_id))
 
     conn.commit()
     conn.close()
 
-
-
 # ---------- Delete logic ----------
-
 
 def delete_question_and_shift(question_id: int):
     conn = get_connection_with_retry()
     c = conn.cursor()
-    # find position
     c.execute("SELECT position FROM Question WHERE id = ?", (question_id,))
     row = c.fetchone()
     if not row:
         conn.close()
         return
     pos = row["position"]
-    # delete responses (cascade should do it) and question
     c.execute("DELETE FROM Question WHERE id = ?", (question_id,))
-    # shift positions > pos down by 1
     c.execute(
         "UPDATE Question SET position = position - 1 WHERE position > ?", (pos,))
     conn.commit()
     conn.close()
-
 
 def delete_all_questions():
     conn = get_connection_with_retry()
@@ -408,6 +345,7 @@ def delete_all_questions():
     conn.commit()
     conn.close()
 
+# ---------- Helpers ----------
 
 def question_already_exist(id) -> bool:
     conn = get_connection_with_retry()
@@ -417,14 +355,14 @@ def question_already_exist(id) -> bool:
     conn.close()
     return exists
 
+# ---------- Update question ----------
 
 def update_question(question: Question):
     # Not used directly now; provided for compatibility
     update_question_fields(question)
     return question.id
 
-# ---------- Answers ----------
-
+# ---------- Verification answers ----------
 
 def is_answer_correct(question_id: int, answer_index: int) -> bool:
     conn = get_connection_with_retry()
@@ -437,10 +375,7 @@ def is_answer_correct(question_id: int, answer_index: int) -> bool:
     conn.close()
     return bool(row and row["isCorrect"])
 
-
-
 # ---------- Participations ----------
-
 
 def insert_participation(playerName: str, score: int, answers: list) -> int:
     conn = get_connection_with_retry()
@@ -452,7 +387,6 @@ def insert_participation(playerName: str, score: int, answers: list) -> int:
     conn.close()
     return pid
 
-
 def get_all_participations_sorted():
     conn = get_connection_with_retry()
     c = conn.cursor()
@@ -463,7 +397,6 @@ def get_all_participations_sorted():
                 for r in rows]
     conn.close()
     return result
-
 
 def delete_all_participations():
     conn = get_connection_with_retry()

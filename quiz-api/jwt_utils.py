@@ -13,7 +13,6 @@ def build_token():
     token = jwt.encode(payload, secret, algorithm="HS256")
     return token
 
-
 def decode_token(token):
     """Vérifie et décode un JWT"""
     try:

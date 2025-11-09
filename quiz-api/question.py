@@ -31,7 +31,6 @@ class Question:
             answers=answers
         )
 
-
 class Reponse:
     def __init__(self, id: int = None, question_id: int = None, text: str = "", isCorrect: bool = False, answer_index: int = None):
         self.id = id
