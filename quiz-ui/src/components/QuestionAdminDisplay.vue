@@ -4,6 +4,7 @@
   <div v-if="token">
     <div class="wrap" v-if="question">
       <div class="actions">
+        <button @click="onCancel" class="editer">Retour</button>
         <button @click="goEdit" class="editer">Éditer</button>
         <button class="danger" @click="deleteQuestion">Supprimer</button>
       </div>
@@ -24,7 +25,7 @@
 
     <p v-else class="empty">Chargement…</p>
 
-    <button class="logout-fixed" @click="logout">Déconnexion</button>
+    <button class="button" @click="logout">Déconnexion</button>
   </div>
 
   <!-- Si pas de token -->
@@ -67,6 +68,10 @@ async function deleteQuestion() {
   }
 }
 
+function onCancel() {
+  router.push('/admin');
+}
+
 function logout() {
   localStorage.removeItem("adminToken");
   token.value = "";
@@ -82,9 +87,9 @@ function logout() {
   text-align: center;
 }
 
-.actions { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 12px; }
-.danger { background: #f05050; border: 1px solid #ec5353; border-radius: 40px; }
-.editer { background-color: var(--second-color); border-radius: 40px; width: 110px; }
+.actions { display: flex; gap: 15px; justify-content: flex-end; margin-bottom: 30px; }
+.danger { background: #f05050; border: 1px solid #ec5353; border-radius: 40px; padding: 10px 20px; }
+.editer { background-color: var(--second-color); border-radius: 40px; width: 110px; border: none; }
 
 .title {
   margin: 0 0 8px;
@@ -100,7 +105,8 @@ function logout() {
 }
 
 .image {
-  max-width: 100%;
+  max-height: 600px;
+  width: 700px;
   height: auto;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,.08);

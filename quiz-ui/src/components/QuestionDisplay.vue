@@ -1,26 +1,26 @@
 <!-- components/QuestionDisplay-->
 <template>
-  <div v-if="question" class="question">
-    <h2 class="question__title">{{ question.title }}</h2>
-    <p class="question__text">{{ question.text }}</p>
-
-    <img
-      v-if="question.image" :src="question.image" alt="Chargement de l'image..." class="question__image"
-    />
-
-    <div class="answers">
-      <a class="answer" @click="emit('click-on-answer', 1)">
-        {{ question.possibleAnswers[0].text }}
-      </a>
-      <a class="answer" @click="emit('click-on-answer', 2)">
-        {{ question.possibleAnswers[1].text }}
-      </a>
-      <a class="answer" @click="emit('click-on-answer', 3)">
-        {{ question.possibleAnswers[2].text }}
-      </a>
-      <a class="answer" @click="emit('click-on-answer', 4)">
-        {{ question.possibleAnswers[3].text }}
-      </a>
+  <div v-if="question" class="wrapper double">
+    <div>
+      <p class="question__title">{{ question.title }}</p>
+      <p class="question__text">{{ question.text }}</p>
+      <div class="wrapper answers">
+        <a class="button" @click="emit('click-on-answer', 1)">
+          {{ question.possibleAnswers[0].text }}
+        </a>
+        <a class="button" @click="emit('click-on-answer', 2)">
+          {{ question.possibleAnswers[1].text }}
+        </a>
+        <a class="button" @click="emit('click-on-answer', 3)">
+          {{ question.possibleAnswers[2].text }}
+        </a>
+        <a class="button" @click="emit('click-on-answer', 4)">
+          {{ question.possibleAnswers[3].text }}
+        </a>
+      </div>
+    </div>
+    <div>
+      <img v-if="question.image" :src="question.image" alt="Chargement de l'image..." class="quiz-img"/>
     </div>
   </div>
 </template>
@@ -33,6 +33,7 @@ const emit = defineEmits(['click-on-answer']);
 </script>
 
 <style scoped>
+
 .question {
   max-width: 720px;
   margin: 24px auto;
@@ -42,14 +43,14 @@ const emit = defineEmits(['click-on-answer']);
 
 .question__title {
   margin: 0 0 8px;
-  font-size: 1.5rem;
-  color: #f3f33e;
-  font-weight: 700;
+  font-size: 1.6rem;
+  color: rgb(180, 180, 180);
+  font-weight: lighter;
 }
 
 .question__text {
   margin: 0 0 16px;
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #fbfdfd;
   font-weight: 700;
 }
@@ -66,34 +67,27 @@ const emit = defineEmits(['click-on-answer']);
 .answers {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  justify-items: center;
+  margin-top: 70px;
 }
 
-.answer {
-  display: inline-block;
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: #f5f7fb;
-  border: 1px solid #e5e8ef;
-  text-decoration: none;
-  color: #1f2937;
-  font-weight: 600;
-  transition: transform .06s ease, box-shadow .06s ease, background .2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+.answers .button {
+  transition: .3s ease;
   cursor: pointer;
+  padding: 25px;
+  border-radius: 100px;
+  font-size: 1.4rem;
+  margin: 40px 20px;
 }
 
-.answer:hover {
-  background: #bfe17a;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+.answers .button:hover {
+  transform: translateY(-5px);
+  background-color: transparent;
+  color: var(--second-color);
+  box-shadow: 0 0 10px var(--second-color);
 }
 
-.answer:active {
+.answers .button:active {
   transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
 
 /* ajustement mobile */

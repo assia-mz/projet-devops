@@ -49,14 +49,13 @@
         <button @click="onSave" class="button">Enregistrer</button>
       </div>
     </div>
-
-    <button class="logout-fixed" @click="logout">Déconnexion</button>
   </div>
 
   <!-- Si pas de token -->
   <div v-else class="denied">
     Accès réservé. Veuillez vous connecter.
   </div>
+  <button class="button" @click="logout">Déconnexion</button>
 </template>
 
 <script setup>

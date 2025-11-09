@@ -186,6 +186,7 @@ a {
     font-size: 1rem;
     transition: all .5s ease-out;
     cursor: pointer;
+    text-align: center;
 }
 
 .button:hover {

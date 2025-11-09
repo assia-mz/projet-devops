@@ -19,7 +19,7 @@ onMounted(async () => {
       <router-link to="/new-quiz" class="button launch-btn">Démarrer le quiz !</router-link>
     </div>
     <div>
-      <img src="../assets/fonds/t-rex.jpg" class="quiz-img"/>
+      <img src="../assets/fonds/t-rex.jpg" class="quiz-img home-img"/>
     </div>
   </div>
 

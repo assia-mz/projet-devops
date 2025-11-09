@@ -24,9 +24,9 @@
       <section class="content">
         <QuestionsList />
       </section>
-      <button class="logout" @click="logout">Déconnexion</button>
     </div>
   </div>
+  <button class="button" @click="logout">Déconnexion</button>
 </template>
 
 <script setup>

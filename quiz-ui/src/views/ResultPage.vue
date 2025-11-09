@@ -1,16 +1,18 @@
 <template>
   <div class="result">
     <h1>Résultat</h1>
+    <div class="classement">
 
-    <p class="player">
-      Joueur : <strong>{{ playerName }}</strong>
-    </p>
-    <p class="score">
-      Score : <strong>{{ currentScore }}</strong> / {{ totalQuestions }}
-    </p>
+      <p class="player">
+        Joueur : <strong>{{ playerName }}</strong>
+      </p>
+      <p class="score">
+        Score : <strong>{{ currentScore }}</strong> / {{ totalQuestions }}
+      </p>
 
-    <div class="ranking" v-if="totalParticipants > 0">
-      <p>Classement : <strong>{{ playerRank }}</strong> / {{ totalParticipants }}</p>
+      <div class="ranking" v-if="totalParticipants > 0">
+        <p>Classement : <strong>{{ playerRank }}</strong> / {{ totalParticipants }}</p>
+      </div>
     </div>
 
     <div class="wrapper double scoreboard">
@@ -71,8 +73,8 @@
         <p v-else class="empty">Aucune participation enregistrée.</p>
       </div>
     </div>
+    <router-link to="/" class="button">Retour à l'accueil</router-link>
 
-    <router-link to="/" class="home-btn">Retour à l'accueil</router-link>
   </div>
 </template>
 
