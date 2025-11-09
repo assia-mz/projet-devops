@@ -175,10 +175,6 @@ a {
     text-decoration: none;
 }
 
-button {
-    cursor: pointer;
-}
-
 .button {
     padding: 20px 50px;
     border-radius: 40px;
@@ -189,13 +185,13 @@ button {
     font-weight: bold;
     font-size: 1rem;
     transition: all .5s ease-out;
+    cursor: pointer;
 }
 
 .button:hover {
     box-shadow: 0 0 10px var(--main-color);
     background-color: var(--main-color);
     color: var(--third-color);
-    transform: scale(1.5);
 }
 
 .button2 {
