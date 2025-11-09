@@ -52,6 +52,7 @@ async function login() {
 
 function logout() {
   token.value = "";
+  console.log("Logging out", token.value);
   localStorage.removeItem("adminToken");
   location.href = "/";
 }
