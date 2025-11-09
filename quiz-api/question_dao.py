@@ -6,6 +6,7 @@ import time
 DB_PATH = "bdd.db"
 
 
+
 def get_connection_with_retry(retries=5, delay=0.1):
     for _ in range(retries):
         try:

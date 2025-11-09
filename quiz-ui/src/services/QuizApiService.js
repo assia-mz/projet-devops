@@ -1,3 +1,5 @@
+// services/QuizApiService.js
+
 import axios from "axios";
 
 const instance = axios.create({
@@ -40,4 +42,9 @@ export default {
   postParticipation(payload) {
     return this.call("post", "/participations", payload);
   },
+
+  getAllQuestions() {
+  return this.call("get", "/questions/all");
+}
+
 };

@@ -1,13 +1,11 @@
+<!-- components/QuestionDisplay-->
 <template>
   <div v-if="question" class="question">
     <h2 class="question__title">{{ question.title }}</h2>
     <p class="question__text">{{ question.text }}</p>
 
     <img
-      v-if="question.image"
-      :src="question.image"
-      alt=""
-      class="question__image"
+      v-if="question.image" :src="question.image" alt="Chargement de l'image..." class="question__image"
     />
 
     <div class="answers">
@@ -69,7 +67,7 @@ const emit = defineEmits(['click-on-answer']);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  justify-items: center; /* centre chaque tuile dans sa cellule */
+  justify-items: center;
 }
 
 .answer {
@@ -98,7 +96,7 @@ const emit = defineEmits(['click-on-answer']);
   box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
 
-/* petit ajustement mobile */
+/* ajustement mobile */
 @media (max-width: 480px) {
   .answers {
     grid-template-columns: 1fr; /* une par ligne si l'écran est trop étroit */

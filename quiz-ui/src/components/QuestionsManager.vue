@@ -1,3 +1,4 @@
+<!-- components/QuestionsManager-->
 <template>
   <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
   <QuestionDisplay
@@ -29,7 +30,7 @@ onMounted(async () => {
   }
 
   const info = await QuizApiService.getQuizInfo();
-  totalNumberOfQuestion.value = info.data.size;    // { size, scores }
+  totalNumberOfQuestion.value = info.data.size;
 
   if (totalNumberOfQuestion.value > 0) {
     await loadQuestionByPosition(currentQuestionPosition.value);
@@ -56,7 +57,7 @@ async function answerClickedHandler(choiceIndex) {
 async function endQuiz() {
   const player = {
     playerName: ParticipationStorageService.getPlayerName(),
-    answers: selectedAnswer.value,                 // longueur = size, valeurs 1..4
+    answers: selectedAnswer.value,
   };
 
   const response = await QuizApiService.postParticipation(player);

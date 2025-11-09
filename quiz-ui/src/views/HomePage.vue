@@ -1,13 +1,15 @@
+<!-- views/HomePage.vue -->
 <script setup>
 import { ref, onMounted } from 'vue';
-import quizApiService from '@/services/QuizApiService';
+import QuizApiService from '@/services/QuizApiService';
+
+const topScores = ref([]); // [{ playerName, score }, ...]
 
 onMounted(async () => {
-  console.log('Home page mounted');
-  registeredScores.value = await quizApiService.getRegisteredScores();
+  const res = await QuizApiService.getQuizInfo();
+  const all = res?.data?.scores ?? [];
+  topScores.value = all.slice(0, 3); // top 3 déjà triés côté back
 });
-
-const registeredScores = ref([]);
 </script>
 
 <template>
@@ -20,53 +22,23 @@ const registeredScores = ref([]);
       <img src="../assets/fonds/t-rex.jpg" class="quiz-img"/>
     </div>
   </div>
-  <div class="wrapper double scoreboard">
+
+  <div class="wrapper scoreboard" >
     <div>
-      <h1 class="title">Tableau des scores</h1>
-      <h4 class="title">Général</h4>
+      <h1 class="title">Meilleurs scores</h1>
       <div class="wrapper triple classement">
         <div class="right-text yellow">
-          <p>1</p>
-          <p>2</p>
-          <p>3</p>
+          <p v-for="(s, i) in topScores" :key="i">{{ i + 1 }}</p>
         </div>
         <div class="center-text">
-          <p>Assia</p>
-          <p>Aissatou</p>
-          <p>Nolan</p>
+          <p v-for="(s, i) in topScores" :key="i">{{ s.playerName }}</p>
         </div>
         <div class="left-text green">
-          <p>100</p>
-          <p>90</p>
-          <p>80</p>
+          <p v-for="(s, i) in topScores" :key="i">{{ s.score }}</p>
         </div>
       </div>
+      <p v-if="!topScores.length" class="empty">Aucun score pour le moment.</p>
     </div>
-    <div>
-      <div>
-        <h1 class="title">Tableau des scores</h1>
-        <h4 class="title">Personnel</h4>
-      </div>
-      <div class="wrapper triple classement">
-        <div class="right-text yellow">
-          <p>1</p>
-          <p>2</p>
-          <p>3</p>
-        </div>
-        <div class="center-text">
-          <p>Nolan</p>
-          <p>Nolan</p>
-          <p>Nolan</p>
-        </div>
-        <div class="left-text green">
-          <p>80</p>
-          <p>70</p>
-          <p>60</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
-    {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
+    <div></div>
   </div>
 </template>

@@ -144,7 +144,8 @@ def questions_root():
 def questions_all():
     if request.method == 'GET':
         questions = question_dao.get_all_questions()
-        return [q.to_dict() for q in questions], 200
+        #return [q.to_dict() for q in questions], 200
+        return questions, 200
 
     # DELETE all (protected)
     if request.method == 'DELETE':

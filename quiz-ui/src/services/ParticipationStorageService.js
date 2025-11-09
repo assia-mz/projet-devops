@@ -1,3 +1,4 @@
+// services/ParticipationStorageService.js
 export default {
   clear() {
 		window.localStorage.clear();

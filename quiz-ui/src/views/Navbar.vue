@@ -13,7 +13,7 @@ onMounted(async () => {
             <router-link to="/"><img src="../assets/logos/q-blanc.png" class="logo-navbar"></router-link>
             <div>
                 <router-link to="/" class="button home-btn">Home</router-link>
-                <router-link to="/login" class="button">Connexion</router-link>
+                <router-link to="/admin" class="button">Admin</router-link>
             </div>
         </div>
     </nav>
