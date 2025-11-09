@@ -1,26 +1,36 @@
-<!-- components/QuestionAdminDisplay-->
+<!-- components/QuestionAdminDisplay.vue -->
 <template>
-  <div class="wrap" v-if="question">
-    <div class="actions">
-      <button @click="goEdit" class="editer">Éditer</button>
-      <button class="danger" @click="deleteQuestion">Supprimer</button>
+  <!-- Afficher seulement si token présent -->
+  <div v-if="token">
+    <div class="wrap" v-if="question">
+      <div class="actions">
+        <button @click="goEdit" class="editer">Éditer</button>
+        <button class="danger" @click="deleteQuestion">Supprimer</button>
+      </div>
+
+      <h2 class="title">{{ question.title }}</h2>
+      <p class="text">{{ question.text }}</p>
+      <img v-if="question.image" :src="question.image" alt="" class="image" />
+
+      <ul class="answers">
+        <li v-for="ans in question.possibleAnswers" :key="ans.id ?? ans.index">
+          <label>
+            <input type="radio" :checked="ans.isCorrect" disabled />
+            <span>{{ ans.text }}</span>
+          </label>
+        </li>
+      </ul>
     </div>
 
-    <h2 class="title">{{ question.title }}</h2>
-    <p class="text">{{ question.text }}</p>
-    <img v-if="question.image" :src="question.image" alt="" class="image" />
+    <p v-else class="empty">Chargement…</p>
 
-    <ul class="answers">
-      <li v-for="ans in question.possibleAnswers" :key="ans.id ?? ans.index">
-        <label>
-          <input type="radio" :checked="ans.isCorrect" disabled />
-          <span>{{ ans.text }}</span>
-        </label>
-      </li>
-    </ul>
+    <button class="logout-fixed" @click="logout">Déconnexion</button>
   </div>
 
-  <p v-else class="empty">Chargement…</p>
+  <!-- Si pas de token -->
+  <div v-else class="empty">
+    Accès réservé. Veuillez vous connecter.
+  </div>
 </template>
 
 <script setup>
@@ -31,9 +41,11 @@ import QuizApiService from "@/services/QuizApiService";
 const route = useRoute();
 const router = useRouter();
 
+const token = ref(localStorage.getItem("adminToken") || "");
 const question = ref(null);
 
 onMounted(async () => {
+  if (!token.value) return; // pas de token on n’affiche pas la page
   const id = route.params.id || route.query.id;
   if (!id) return;
   const res = await QuizApiService.call("get", `/questions/${id}`);
@@ -42,7 +54,6 @@ onMounted(async () => {
 
 function goEdit() {
   if (!question.value) return;
-  // Redirige vers la page d'édition
   router.push({ path: "/edition", query: { id: question.value.id } });
 }
 
@@ -50,17 +61,16 @@ async function deleteQuestion() {
   if (!question.value) return;
   if (!confirm("Supprimer cette question ?")) return;
 
-  const token = localStorage.getItem("adminToken") || "";
-  const res = await QuizApiService.call(
-    "delete",
-    `/questions/${question.value.id}`,
-    null,
-    token
-  );
+  const res = await QuizApiService.call("delete", `/questions/${question.value.id}`, null, token.value );
   if (res && (res.status === 200 || res.status === 204)) {
-    // retour à la liste des questions
     router.push("/admin");
   }
+}
+
+function logout() {
+  localStorage.removeItem("adminToken");
+  token.value = "";
+  router.push("/admin");
 }
 </script>
 
@@ -97,7 +107,6 @@ async function deleteQuestion() {
   margin: 12px 0 20px;
 }
 
-
 .answers {
   list-style: none;
   padding: 0;
@@ -107,9 +116,7 @@ async function deleteQuestion() {
   gap: 12px;
   justify-items: center;
 }
-.answers li {
-  width: 100%;
-}
+.answers li { width: 100%; }
 .answers li label {
   display: inline-flex;
   align-items: center;
@@ -130,12 +137,24 @@ async function deleteQuestion() {
   box-shadow: 0 4px 10px rgba(0,0,0,.08);
 }
 
-
-/* Chargement */
+/* Chargement / accès refusé */
 .empty { text-align: center; margin: 24px 0; }
+
+/* Bouton déconnexion */
+.logout-fixed {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #7f1d1d;
+  font-weight: 600;
+  cursor: pointer;
+}
 
 @media (max-width: 480px) {
   .answers { grid-template-columns: 1fr; }
 }
 </style>
-
