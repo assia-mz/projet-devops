@@ -2,8 +2,9 @@ import sqlite3
 import json
 from question import Question, Reponse
 import time
+import os
 
-DB_PATH = "bdd.db"
+DB_PATH = os.environ.get("DATABASE_PATH", "instance/database.db")
 
 # ---------- Connection ----------
 def get_connection_with_retry(retries=5, delay=0.1):
@@ -358,7 +359,6 @@ def question_already_exist(id) -> bool:
 # ---------- Update question ----------
 
 def update_question(question: Question):
-    # Not used directly now; provided for compatibility
     update_question_fields(question)
     return question.id
 
