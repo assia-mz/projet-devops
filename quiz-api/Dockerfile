@@ -20,8 +20,10 @@ ENV DATABASE_PATH=/app/instance/database.db
 # Copier le code
 COPY . .
 
+EXPOSE 5000
+
 # Informations sur l'image
 LABEL maintainer="assia" version="1.1"
 
 # Démarrer gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers=3", "app:app"]
